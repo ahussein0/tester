@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Volunteer Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"> <!-- Link to CSS file -->
+  <script defer src="script.js"></script> <!-- Link to JS file -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+</head>
+<body>
+
+ <!-- Sidebar Navigation -->
+<nav class="sidebar">
+  <div class="sidebar-top-wrapper">
+    <div class="sidebar-top">
+      <a href="#" class="logo__wrapper">
+        <img src="vol.jpg" alt="Logo" class="logo-small">
+        <span class="hide">Volunteer</span>
+      </a>
+    </div>
+    <div class="expand-btn">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6.00979 2.72L10.3565 7.06667C10.8698 7.58 10.8698 8.42 10.3565 8.93333L6.00979 13.28" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search__wrapper">
+    <input type="search" placeholder="Search for anything...">
+  </div>
+
+  <!-- Sidebar Links -->
+  <div class="sidebar-links">
+    <h2>Main</h2>
+    <ul>
+      <li><a href="#" class="tooltip" onclick="showSection('dashboard')">Dashboard</a></li>
+      <li><a href="#" class="tooltip" onclick="showSection('login')">Login</a></li>
+      <li><a href="#" class="tooltip" onclick="showSection('register')">User Registration</a></li>
+      <li><a href="#" class="tooltip" onclick="showSection('profile')">User Profile</a></li>
+      <li><a href="#" class="tooltip" onclick="showSection('event')">Event Management</a></li>
+      <li><a href="#" class="tooltip" onclick="showSection('match')">Volunteer Matching</a></li>
+      <li><a href="#" class="tooltip" onclick="showSection('history')">Volunteer History</a></li>
+      <li><a href="#" class="tooltip" onclick="showSection('notifications')">Notifications</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+  <!-- Content Sections -->
+  <main id="content">
+    <!-- Dashboard Section -->
+    
+<section id="dashboard" class="content-section" style="display:block;"> <!-- Show dashboard by default -->
+  <h2>Dashboard</h2>
+  <p>Welcome to the volunteer management system!</p>
+</section>
+
+
+    <!-- Login Section -->
+    <section id="login" class="content-section" style="display:none;">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Login</button>
+      </form>
+      <div id="loginMessage"></div> <!-- Display login result -->
+    </section>
+
+    <!-- User Registration Section -->
+    <section id="register" class="content-section" style="display:none;">
+      <h2>User Registration</h2>
+      <form id="registrationForm">
+        <label for="email">Email (Username):</label>
+        <input type="email" id="registerEmail" name="email" required>
+        <label for="password">Password:</label>
+        <input type="password" id="registerPassword" name="password" required>
+        <button type="submit">Register</button>
+      </form>
+      <div id="registerMessage"></div> <!-- Display registration result -->
+    </section>
+
+    <section id="profile" class="content-section" style="display:none;">
+      <h2>User Profile</h2>
+      <form id="profileForm">
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName" maxlength="50" required>
+    
+          <label for="address1">Address 1:</label>
+  <input type="text" id="address1" name="address1" maxlength="100" required>
+
+  <label for="address2">Address 2 (Optional):</label>
+  <input type="text" id="address2" name="address2" maxlength="100" placeholder="Apartment, suite, unit, etc. (optional)">
+
+    
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" maxlength="100" required>
+    
+        <label for="state">State:</label>
+        <select id="state" name="state" required>
+          <option value="">Select State</option>
+          <option value="TX">TX</option>
+          <option value="CA">CA</option>
+          <!-- Add more states as needed -->
+        </select>
+    
+        <label for="zipCode">Zip Code:</label>
+        <input type="text" id="zipCode" name="zipCode" maxlength="9" pattern="[0-9]{5}(?:-[0-9]{4})?" title="Please enter a valid ZIP code" required>
+    
+        <label for="skills">Skills (Select multiple):</label>
+<select id="skills" name="skills" multiple size="4">
+  <option value="Organization">Organization</option>
+  <option value="Teamwork">Teamwork</option>
+  <option value="Communication">Communication</option>
+  <option value="Leadership">Leadership</option>
+</select>
+
+<!-- Selected Skills Container -->
+<div id="selectedSkillsContainer">
+  <h4>Selected Skills:</h4>
+  <ul id="selectedSkillsList">
+    <!-- Selected skills will appear here -->
+  </ul>
+</div>
+    
+        <label for="preferences">Preferences (Optional):</label>
+        <textarea id="preferences" name="preferences" placeholder="Enter preferences (Optional)"></textarea>
+    
+        <label for="availability">Availability (Select multiple dates):</label>
+<input type="text" id="availability" name="availability" placeholder="Select available dates" required>
+
+    
+        <button type="submit">Update Profile</button>
+      </form>
+      <div id="profileMessage"></div> <!-- Display profile update result -->
+    </section>
+    
+    
+
+<!-- Event Management Section -->
+<section id="event" class="content-section" style="display:none;">
+  <h2>Create Event</h2>
+  <form id="eventForm">
+    <label for="eventName">Event Name:</label>
+    <input type="text" id="eventName" name="eventName" maxlength="100" required>
+
+    <label for="eventDescription">Event Description:</label>
+    <textarea id="eventDescription" name="eventDescription" required></textarea>
+
+    <label for="eventLocation">Location:</label>
+    <input type="text" id="eventLocation" name="eventLocation" required>
+
+    <label for="skills">Skills (Select multiple):</label>
+<select id="skills" name="skills" multiple size="4" required>
+  <option value="Organization">Organization</option>
+  <option value="Teamwork">Teamwork</option>
+  <option value="Communication">Communication</option>
+  <option value="Leadership">Leadership</option>
+</select>
+
+
+    <label for="urgency">Urgency:</label>
+    <select id="urgency" name="urgency" required>
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+    </select>
+
+    <label for="eventDate">Event Date:</label>
+    <input type="date" id="eventDate" name="eventDate" required>
+
+    <button type="submit">Create Event</button>
+  </form>
+  <div id="eventMessage"></div> <!-- Display event creation result -->
+</section>
+
+
+
+    <!-- Volunteer Matching Section -->
+<section id="match" class="content-section" style="display:none;">
+  <h2>Volunteer Matching</h2>
+  <form id="matchingForm">
+    <label for="volunteerName">Volunteer Name:</label>
+    <input type="text" id="volunteerName" name="volunteerName" required>
+
+    <label for="eventName">Event Name:</label>
+    <select id="eventName" name="eventName" required>
+      <!-- Dynamically populate event options with JS if needed -->
+    </select>
+
+    <button type="submit">Match Volunteer</button>
+  </form>
+  <div id="matchMessage"></div> <!-- Display matching result -->
+</section>
+<!-- Volunteer History Section -->
+<section id="history" class="content-section" style="display:none;">
+  <h2>Volunteer History</h2>
+  <table id="historyTable">
+    <thead>
+      <tr>
+        <th>Event Name</th>
+        <th>Event Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- History data will be inserted here with JavaScript -->
+    </tbody>
+  </table>
+</section>
+<!-- Notifications Section -->
+<section id="notifications" class="content-section" style="display:none;">
+  <h2>Notifications</h2>
+  <div id="notificationMessage"></div>
+</section>
+
+
+
+  </main>
+
+</body>
+</html>
