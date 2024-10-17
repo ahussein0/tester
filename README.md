@@ -1,4 +1,4 @@
-# Software Design Task 3
+# Software Design Task 3 (Back-end)
 
 ## Features
 - User Authentication: Users can register and log in with email and password.
