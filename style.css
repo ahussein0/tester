@@ -1,0 +1,181 @@
+/* General styling */
+:root {
+  --primary-color: #191919;
+  --white: #FFFFFF;
+  --sidebar-primary: #353E47;
+  --sidebar-primary-hover: #353E47;
+  --sidebar-background: #070E13;
+  --background: #F1F3FF;
+  --text-link: #FFFFFF;
+  --headline: #CBD1D8;
+  --expand-button: #353E47;
+  --logout: #FA7575;
+}
+
+body {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  background: var(--background);
+  display: flex;
+  height: 100vh;
+  overflow: auto; /* Allow scrolling */
+}
+
+html {
+  height: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Sidebar styling */
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  background-color: var(--sidebar-background);
+  color: var(--white);
+  padding: 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-y: auto; /* Allow scrolling in sidebar if needed */
+}
+
+/* Ensure the logo image is sized correctly */
+.logo__wrapper img {
+  max-width: 100%; /* Ensure the image fits the width of the sidebar */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.sidebar-links ul {
+  list-style-type: none;
+}
+
+.sidebar-links li {
+  margin-bottom: 1rem;
+}
+
+.sidebar-links a {
+  color: var(--text-link);
+  text-decoration: none;
+  display: block;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 1.1rem;
+}
+
+.sidebar-links a:hover,
+.sidebar-links a.active {
+  background-color: var(--sidebar-primary-hover);
+}
+
+/* Content area */
+#content {
+  margin-left: 250px; /* To make space for the fixed sidebar */
+  padding: 40px;
+  width: calc(100% - 250px); /* Adjust the width based on the sidebar */
+}
+
+.content-section {
+  display: none;
+  width: 100%;
+  max-width: 600px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 20px auto; /* Center the section horizontally */
+}
+
+.content-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.content-section input,
+.content-section select,
+.content-section textarea {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+button {
+  padding: 10px;
+  font-size: 1rem;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 150px;
+  margin: 0 auto;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+/* Search bar styling */
+.search__wrapper {
+  padding: 0 1rem;
+  position: relative;
+}
+
+.search__wrapper input {
+  background: var(--background);
+  height: 2.5rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 0 0.5rem;
+  padding-left: 2rem;
+  flex-grow: 1;
+  outline: none;
+  border: none;
+}
+
+/* Highlight selected skills */
+.highlighted {
+  background-color: lightblue;
+  color: black;
+}
+
+/* Skills dropdown on the left */
+#skills {
+  width: 200px;
+  float: left;
+  margin-right: 20px;
+}
+
+/* Selected skills box on the right */
+#selectedSkillsContainer {
+  width: 200px;
+  float: right;
+}
+
+#selectedSkillsList {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+#selectedSkillsList li {
+  background-color: lightgreen;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
