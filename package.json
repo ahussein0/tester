@@ -4,7 +4,8 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
