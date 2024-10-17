@@ -10,17 +10,21 @@
   --headline: #CBD1D8;
   --expand-button: #353E47;
   --logout: #FA7575;
+  --button-color: #007bff;
+  --button-hover-color: #0056b3;
+  --highlight-color: lightblue;
+  --selected-skill-bg: lightgreen;
 }
 
 body {
   font-family: 'Work Sans', sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   margin: 0;
   padding: 0;
   background: var(--background);
   display: flex;
   height: 100vh;
-  overflow: auto; /* Allow scrolling */
+  overflow: auto;
 }
 
 html {
@@ -43,13 +47,12 @@ html {
   position: fixed;
   top: 0;
   left: 0;
-  overflow-y: auto; /* Allow scrolling in sidebar if needed */
+  overflow-y: auto;
 }
 
-/* Ensure the logo image is sized correctly */
 .logo__wrapper img {
-  max-width: 100%; /* Ensure the image fits the width of the sidebar */
-  height: auto; /* Maintain aspect ratio */
+  max-width: 100%;
+  height: auto;
 }
 
 .sidebar-links ul {
@@ -76,20 +79,20 @@ html {
 
 /* Content area */
 #content {
-  margin-left: 250px; /* To make space for the fixed sidebar */
+  margin-left: 250px;
   padding: 40px;
-  width: calc(100% - 250px); /* Adjust the width based on the sidebar */
+  width: calc(100% - 250px);
 }
 
 .content-section {
   display: none;
   width: 100%;
   max-width: 600px;
-  background: white;
+  background: var(--white);
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 20px auto; /* Center the section horizontally */
+  margin: 20px auto;
 }
 
 .content-section form {
@@ -113,8 +116,8 @@ html {
 button {
   padding: 10px;
   font-size: 1rem;
-  color: white;
-  background-color: #007bff;
+  color: var(--white);
+  background-color: var(--button-color);
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -123,7 +126,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: var(--button-hover-color);
 }
 
 h2 {
@@ -151,21 +154,19 @@ h2 {
 
 /* Highlight selected skills */
 .highlighted {
-  background-color: lightblue;
+  background-color: var(--highlight-color);
   color: black;
 }
 
-/* Skills dropdown on the left */
-#skills {
-  width: 200px;
-  float: left;
-  margin-right: 20px;
+/* Skills dropdown on the left and selected skills box on the right using Flexbox */
+.skills-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
 }
 
-/* Selected skills box on the right */
-#selectedSkillsContainer {
-  width: 200px;
-  float: right;
+#skills, #selectedSkillsContainer {
+  width: 45%;
 }
 
 #selectedSkillsList {
@@ -174,8 +175,33 @@ h2 {
 }
 
 #selectedSkillsList li {
-  background-color: lightgreen;
+  background-color: var(--selected-skill-bg);
   padding: 5px;
   margin-bottom: 5px;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  #content {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .skills-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #skills, #selectedSkillsContainer {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 }
 
