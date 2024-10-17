@@ -35,3 +35,14 @@ This will install all dependencies listed in package.json, including:
   - cors
   - jest (for testing)
   - supertest (for testing)
+
+## Launching the server locally
+- To launch the server locally, open the terminal in your project directory and run:
+``` node server.js ```
+- This will start the server, and it will be accessible at http://localhost:3001
+
+## Running Code Coverage
+- To run the Jest code coverage for the application, open the terminal in your project directory and execute the following command:
+  ``` npx jest --coverage ```
+- This will run all test suites and generate a code coverage report, showing which parts of the code are covered by tests. The report will be displayed in the terminal, and a detailed HTML version will be available in the coverage folder, which you can view by opening index.html in your browser.
+
