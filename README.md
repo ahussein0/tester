@@ -16,14 +16,15 @@
 - body-parser: Parses incoming request bodies in a middleware.
 - cors: Allows cross-origin requests for development.
 
+## server.test.js/server.js
+- server.test.js is the test suite for the application, designed to validate the functionality of server.js. It uses Jest and Supertest to perform unit and integration tests, ensuring that each API route behaves as expected. The tests cover scenarios like successful and failed user registration, login, profile updates, event creation, and volunteer matching, verifying the robustness and reliability of the backend code.
+
 ## Installation and Setup
 Clone the repository:
 ```bash
 git clone https://github.com/ahussein0/S.DTask3.git
 cd S.DTask3
 ```
-## server.test.js/server.js
-- server.test.js is the test suite for the application, designed to validate the functionality of server.js. It uses Jest and Supertest to perform unit and integration tests, ensuring that each API route behaves as expected. The tests cover scenarios like successful and failed user registration, login, profile updates, event creation, and volunteer matching, verifying the robustness and reliability of the backend code.
 
 ## Install Dependencies
 - Make sure you have Node.js and npm installed. Install the necessary packages by running:
