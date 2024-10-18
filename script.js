@@ -254,7 +254,27 @@ const selectedSkillsList = document.getElementById('selectedSkillsList');
 skillSelect.addEventListener('change', function() {
     const selectedOptions = Array.from(skillSelect.selectedOptions);
 
+    selectedOptions.forEach(option => {
+        // Create a list item for the selected skill
+        const listItem = document.createElement('li');
+        listItem.textContent = option.textContent;
 
+        // Add the skill to the selected skills list
+        selectedSkillsList.appendChild(listItem);
+
+        // Remove the skill from the dropdown
+        option.remove();
+
+        // Add a click event to remove the skill when clicked in the selected box
+        listItem.addEventListener('click', function() {
+            // Add the skill back to the dropdown
+            const newOption = document.createElement('option');
+            newOption.value = option.value;
+            newOption.textContent = option.textContent;
+            skillSelect.appendChild(newOption);
+
+            // Remove the skill from the selected list
+            listItem.remove();
         });
     });
 });
