@@ -29,7 +29,7 @@ cd S.DTask3
 ## Install Dependencies
 - Make sure you have Node.js and npm installed. Install the necessary packages by running:
   ``` npm install ```
-  `` npm install express''' (must download this)
+  ``` npm install express ```
 This will install all dependencies listed in package.json, including:
   - express
   - body-parser
