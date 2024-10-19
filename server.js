@@ -202,6 +202,13 @@ app.post('/create-user', (req, res) => {
 });
 
 
+const PORT = 3001; // Change to a different port if 3000 is in use
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
+
 
 // testing jest 
 module.exports = app;
+
