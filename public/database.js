@@ -1,17 +1,18 @@
+// public/database.js
 const mongoose = require('mongoose');
+const uri = 'mongodb+srv://evanramos1983:Whosane1_@cluster0.xx2f8.mongodb.net/';
 
 const connectDB = async () => {
-    try {
-        const conn = await mongoose.connect('mongodb://evanramos1983:Anash5417_@127.0.0.1:27017/?authSource=admin');
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
-        return conn;
-    } catch (error) {
-        console.error('MongoDB connection error:', error);
-        if (process.env.NODE_ENV !== 'test') {
-            process.exit(1);
-        }
-        throw error;
-    }
+  try {
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected');
+  } catch (error) {
+    console.error('MongoDB connection error:', error.message);
+    process.exit(1);
+  }
 };
 
 module.exports = connectDB;

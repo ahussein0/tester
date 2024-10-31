@@ -1,46 +1,45 @@
+// public/routes/profileRoutes.js
 const express = require('express');
+const mongoose = require('mongoose');
+const UserProfile = require('../models/userProfile');
+const UserCredentials = require('../models/userCredentials');
+
 const router = express.Router();
-const { UserProfile } = require('../models');
 
-// Get user profile
-router.get('/:userId', async (req, res) => {
-    try {
-        const profile = await UserProfile.findOne({ userId: req.params.userId });
-        if (!profile) {
-            return res.status(404).json({ message: 'Profile not found' });
-        }
-        res.json(profile);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+router.post('/', async (req, res) => {
+  try {
+    const { userId, fullName, address1, city, state, zipCode, skills, availability } = req.body;
+
+    // Check if required fields are present
+    if (!userId || !fullName || !address1 || !city || !state || !zipCode || !skills || !availability) {
+      return res.status(400).json({ status: 'error', message: 'Required fields are missing' });
     }
-});
 
-// Update user profile
-router.put('/:userId', async (req, res) => {
-    try {
-        const { fullName, address, city, state, zipcode, skills } = req.body;
-        
-        const profile = await UserProfile.findOneAndUpdate(
-            { userId: req.params.userId },
-            {
-                fullName,
-                address,
-                city,
-                state,
-                zipcode,
-                skills
-            },
-            { new: true, runValidators: true }
-        );
-
-        if (!profile) {
-            return res.status(404).json({ message: 'Profile not found' });
-        }
-
-        res.json(profile);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    // Check if userId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ status: 'error', message: 'Invalid user ID format' });
     }
+
+    // Verify that the user exists in UserCredentials
+    const userExists = await UserCredentials.findById(userId);
+    if (!userExists) {
+      return res.status(404).json({ status: 'error', message: 'User not found' });
+    }
+
+    // Find or create user profile
+    let profile = await UserProfile.findOne({ userId });
+    if (!profile) {
+      profile = new UserProfile({ userId, fullName, address1, city, state, zipCode, skills, availability });
+    } else {
+      profile.set({ fullName, address1, city, state, zipCode, skills, availability });
+    }
+
+    await profile.save();
+    res.status(200).json({ status: 'success', message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error('Error in profile update route:', error);
+    res.status(500).json({ status: 'error', message: 'Profile update failed', error: error.message });
+  }
 });
 
 module.exports = router;

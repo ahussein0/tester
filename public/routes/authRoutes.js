@@ -1,75 +1,67 @@
+// public/routes/authRoutes.js
 const express = require('express');
-const router = express.Router();
 const bcrypt = require('bcryptjs');
-const { UserCredentials, UserProfile } = require('../models');
+const jwt = require('jsonwebtoken');
+const UserCredentials = require('../models/userCredentials');
 
-// Register new user
+const router = express.Router();
+
+// Register a new user
 router.post('/register', async (req, res) => {
-    try {
-        const { email, password, fullName, address, city, state, zipcode, skills } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        // Check if user exists
-        const existingUser = await UserCredentials.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-
-        // Create user credentials
-        const userCredentials = new UserCredentials({
-            email,
-            password
-        });
-        const savedCredentials = await userCredentials.save();
-
-        // Create user profile
-        const userProfile = new UserProfile({
-            userId: savedCredentials._id,
-            fullName,
-            address,
-            city,
-            state,
-            zipcode,
-            skills: skills || []
-        });
-        await userProfile.save();
-
-        res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    // Check if email and password are provided
+    if (!email) {
+      return res.status(400).json({ status: 'error', message: 'Email is required' });
     }
+    if (!password) {
+      return res.status(400).json({ status: 'error', message: 'Password is required' });
+    }
+
+    // Check if email already exists
+    const existingUser = await UserCredentials.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ status: 'error', message: 'User already exists' });
+    }
+
+    const user = new UserCredentials({ email, password });
+    await user.save();
+    res.status(201).json({ status: 'success', message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Error during registration:', error);
+    res.status(500).json({ status: 'error', message: 'Registration failed', error: error.message });
+  }
 });
 
-// Login user
+// Login a user
 router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        
-        // Find user
-        const user = await UserCredentials.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: 'Invalid credentials' });
-        }
+  try {
+    const { email, password } = req.body;
 
-        // Check password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' });
-        }
-
-        // Get user profile
-        const profile = await UserProfile.findOne({ userId: user._id });
-        
-        res.status(200).json({ 
-            message: 'Login successful',
-            user: {
-                id: user._id,
-                email: user.email,
-                profile
-            }
-        });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    // Check if email and password are provided
+    if (!email) {
+      return res.status(400).json({ status: 'error', message: 'Email is required' });
     }
+    if (!password) {
+      return res.status(400).json({ status: 'error', message: 'Password is required' });
+    }
+
+    const user = await UserCredentials.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ status: 'error', message: 'Invalid email or password' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ status: 'error', message: 'Invalid email or password' });
+    }
+
+    res.status(200).json({ status: 'success', message: 'Login successful' });
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json({ status: 'error', message: 'Login failed', error: error.message });
+  }
 });
 
 module.exports = router;
