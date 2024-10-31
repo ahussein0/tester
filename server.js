@@ -1,39 +1,38 @@
+require('dotenv').config();
 const express = require('express');
-const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path');
-const connectDB = require('./public/database');
 
 const app = express();
-
-// Connect to MongoDB
-connectDB();
+const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cors());
-app.use(express.static('public'));
+app.use(express.static('public')); // Serve static files from the public folder
 
-// Routes
-app.use('/auth', require('./public/routes/authRoutes'));
-app.use('/profile', require('./public/routes/profileRoutes'));
-app.use('/events', require('./public/routes/eventRoutes'));
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.error('MongoDB connection error:', err));
 
-// Root route to serve index.html
+
+// Routes setup
+app.use('/api/auth', require('./public/routes/authroutes'));
+app.use('/api/profile', require('./public/routes/profileroutes'));
+app.use('/api/events', require('./public/routes/eventroutes'));
+app.use('/api/match', require('./public/routes/matchroutes'));
+app.use('/api/notifications', require('./public/routes/notificationroutes'));
+
+// Root route
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(__dirname + '/public/index.html');
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ message: 'Something went wrong!' });
-});
-
-if (require.main === module) {
-    const PORT = process.env.PORT || 3001;
+// Start the server only if not in test environment
+if (process.env.NODE_ENV !== 'test') {
     app.listen(PORT, () => {
-        console.log(`Server running on http://localhost:${PORT}`);
+        console.log(`Server is running on http://localhost:${PORT}`);
     });
 }
 

@@ -4,18 +4,20 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-    "test": "jest --coverage --coverageReporters='text'",
-    "coverage": "jest --coverage --coverageReporters='text-summary' --detectOpenHandles --forceExit --verbose",
-    "coverage:full": "jest --coverage --detectOpenHandles --forceExit",
+    "test": "jest --coverage",  
+    "coverage": "jest --coverage --coverageReporters=text-summary --detectOpenHandles --forceExit --verbose",
+    "coverage:full": "jest --coverage --coverageReporters=text,html --detectOpenHandles --forceExit",
     "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.10.0",
