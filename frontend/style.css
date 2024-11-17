@@ -187,3 +187,15 @@ h2 {
       margin-left: 0;
   }
 }
+
+/* Report section */
+#report {
+  display: block;
+  margin-top: 20px;
+}
+
+#reportForm label, #reportForm select {
+  display: block;
+  margin-bottom: 10px;
+}
+
