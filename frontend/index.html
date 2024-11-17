@@ -97,20 +97,28 @@
       <label for="zipCode">Zip Code:</label>
       <input type="text" id="zipCode" name="zipCode" maxlength="9" pattern="[0-9]{5}(?:-[0-9]{4})?" title="Please enter a valid ZIP code" required>
 
-      <label for="skills">Skills (Select multiple):</label>
-      <select id="skills" name="skills" multiple size="4" required>
-        <option value="Organization">Organization</option>
-        <option value="Teamwork">Teamwork</option>
-        <option value="Communication">Communication</option>
-        <option value="Leadership">Leadership</option>
-      </select>
-      <div id="selectedSkillsContainer" style="display: none;">
-        <h4>Selected Skills:</h4>
-        <ul id="selectedSkillsList"></ul>
-      </div>
+     <!-- In the Profile Section, update the skills part: -->
+<label for="skills">Skills (Select multiple):</label>
+<select id="skills" name="skills" multiple size="6" required>
+    <option value="Organization">Organization</option>
+    <option value="Teamwork">Teamwork</option>
+    <option value="Communication">Communication</option>
+    <option value="Leadership">Leadership</option>
+    <!-- Add more skills as needed -->
+</select>
+<span class="select-help">Hold Ctrl (Windows) or ⌘ Cmd (Mac) to select multiple skills</span>
 
-      <label for="availability">Availability (Select multiple dates):</label>
-      <input type="text" id="availability" name="availability" placeholder="Select available dates" required>
+<!-- Selected skills container -->
+<div id="selectedSkillsContainer" class="skills-container">
+    <h4>Selected Skills:</h4>
+    <ul id="selectedSkillsList"></ul>
+</div>
+
+
+
+<label for="availability">Availability (Select multiple dates):</label>
+<input type="text" id="availability" name="availability" placeholder="Select available dates" required>
+
 
       <label for="preferences">Preferences (Optional):</label>
       <textarea id="preferences" name="preferences" placeholder="Enter preferences"></textarea>

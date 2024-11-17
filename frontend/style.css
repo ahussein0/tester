@@ -114,32 +114,63 @@ html {
   margin: 0 auto;
 }
 
-/* Skills dropdown styling */
-#skills {
-  display: block; /* Ensure the dropdown is visible */
-  margin-top: 10px;
+/* Updated Skills styling */
+select[multiple] {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  min-height: 120px;
+  margin: 10px auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: var(--white);
+}
+
+select[multiple] option {
+  padding: 5px;
+  margin: 2px 0;
+}
+
+select[multiple] option:checked {
+  background-color: var(--button-color);
+  color: var(--white);
 }
 
 #selectedSkillsContainer {
-  display: block; /* Ensure the container is visible */
-  margin-top: 15px;
+  width: 100%;
+  max-width: 400px;
+  margin: 15px auto;
+  padding: 15px;
+  background-color: var(--background);
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 #selectedSkillsList {
   list-style-type: none;
   padding: 0;
   margin: 0;
-  background: var(--background);
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
 }
 
 #selectedSkillsList li {
-  background-color: var(--selected-skill-bg);
-  padding: 5px;
-  margin-bottom: 5px;
+  background-color: var(--button-color);
+  color: var(--white);
+  padding: 8px 12px;
+  margin-bottom: 8px;
   border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.select-help {
+  display: block;
+  font-size: 0.85rem;
+  color: #666;
+  margin: 5px auto;
+  max-width: 400px;
+  text-align: left;
 }
 
 /* Button styles */
@@ -179,11 +210,11 @@ h2 {
 /* Responsive design */
 @media (max-width: 768px) {
   .sidebar {
-      width: 100%;
-      position: static;
+    width: 100%;
+    position: static;
   }
 
   #content {
-      margin-left: 0;
+    margin-left: 0;
   }
 }

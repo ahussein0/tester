@@ -7,20 +7,20 @@ function showSection(sectionId) {
 }
 
 // Initialize the app
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     showSection('dashboard'); // Default section
     loadNotifications();
     loadVolunteerHistory();
     loadVolunteerMatching();
-    initializeSkillsPicker(); // Initialize skills picker functionality
+    initializeSkillsPicker();
 });
 
 // Initialize the multi-select datepicker for availability
-$(function () {
+$(function() {
     const selectedDates = [];
 
     $('#availability').datepicker({
-        onSelect: function (dateText) {
+        onSelect: function(dateText) {
             if (!selectedDates.includes(dateText)) {
                 selectedDates.push(dateText);
             } else {
@@ -38,7 +38,7 @@ $(function () {
 
 // Sidebar navigation logic
 document.querySelectorAll(".sidebar-links a").forEach((elem) => {
-    elem.addEventListener("click", function (event) {
+    elem.addEventListener("click", function(event) {
         event.preventDefault();
         const sectionId = this.dataset.section;
         showSection(sectionId);
@@ -62,20 +62,39 @@ async function fetchWithErrorHandling(url, options = {}) {
 
 // Initialize the skills picker
 function initializeSkillsPicker() {
-    const skillsDropdown = document.getElementById('skills');
+    const profileSkills = document.getElementById('skills');
     const selectedSkillsContainer = document.getElementById('selectedSkillsContainer');
     const selectedSkillsList = document.getElementById('selectedSkillsList');
 
-    skillsDropdown.addEventListener('change', function () {
-        selectedSkillsList.innerHTML = ''; // Clear previous list
-        Array.from(skillsDropdown.selectedOptions).forEach(option => {
+    function updateSelectedSkills(dropdown) {
+        selectedSkillsList.innerHTML = '';
+        
+        Array.from(dropdown.selectedOptions).forEach(option => {
             const li = document.createElement('li');
             li.textContent = option.value;
+            
+            const removeBtn = document.createElement('span');
+            removeBtn.textContent = '✕';
+            removeBtn.style.cursor = 'pointer';
+            removeBtn.onclick = (e) => {
+                e.stopPropagation();
+                option.selected = false;
+                updateSelectedSkills(dropdown);
+            };
+            
+            li.appendChild(removeBtn);
             selectedSkillsList.appendChild(li);
         });
+        
+        selectedSkillsContainer.style.display = 
+            selectedSkillsList.children.length > 0 ? 'block' : 'none';
+    }
 
-        selectedSkillsContainer.style.display = selectedSkillsList.children.length > 0 ? 'block' : 'none';
-    });
+    if (profileSkills) {
+        profileSkills.addEventListener('change', function() {
+            updateSelectedSkills(this);
+        });
+    }
 }
 
 // Helper function to retrieve selected skills
@@ -85,7 +104,7 @@ function getSelectedSkills() {
 }
 
 // Handle Login
-document.getElementById('loginForm').addEventListener('submit', async function (event) {
+document.getElementById('loginForm').addEventListener('submit', async function(event) {
     event.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -103,7 +122,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         });
 
         messageElement.innerHTML = `<p style="color: green;">Login successful!</p>`;
-        localStorage.setItem('userEmail', email); // Save user info locally
+        localStorage.setItem('userEmail', email);
         showSection('dashboard');
     } catch (error) {
         messageElement.innerHTML = `<p style="color: red;">${error.message || 'Login failed'}</p>`;
@@ -114,7 +133,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 });
 
 // Handle Registration
-document.getElementById('registrationForm').addEventListener('submit', async function (event) {
+document.getElementById('registrationForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const email = document.getElementById('registerEmail').value;
@@ -126,14 +145,12 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         submitButton.disabled = true;
         submitButton.textContent = 'Registering...';
 
-        // Send registration request
         const data = await fetchWithErrorHandling('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
         });
 
-        // Save user info locally and redirect to the dashboard
         localStorage.setItem('userEmail', data.login.email);
         messageElement.innerHTML = '<p style="color: green;">Registration successful! Logging you in...</p>';
         setTimeout(() => showSection('dashboard'), 2000);
@@ -145,10 +162,8 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     }
 });
 
-
-
 // Handle Profile Form Submission
-document.getElementById('profileForm').addEventListener('submit', async function (event) {
+document.getElementById('profileForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const formData = {
@@ -182,7 +197,7 @@ document.getElementById('profileForm').addEventListener('submit', async function
 });
 
 // Handle Event Form Submission
-document.getElementById('eventForm').addEventListener('submit', async function (event) {
+document.getElementById('eventForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const formData = {
@@ -194,7 +209,6 @@ document.getElementById('eventForm').addEventListener('submit', async function (
         eventDate: document.getElementById('eventDate').value,
     };
 
-    // Ensure requiredSkills is properly populated
     if (!formData.requiredSkills || formData.requiredSkills.length === 0) {
         alert('Please select at least one required skill.');
         return;
@@ -220,17 +234,14 @@ document.getElementById('eventForm').addEventListener('submit', async function (
     }
 });
 
-
-
 // Load Volunteer Matching
 async function loadVolunteerMatching() {
     try {
         const events = await fetchWithErrorHandling('/api/matching/events');
         const volunteers = await fetchWithErrorHandling('/api/matching/volunteers');
 
-        // Populate events dropdown
         const eventSelect = document.getElementById('matchEventName');
-        eventSelect.innerHTML = ''; // Clear previous options
+        eventSelect.innerHTML = '';
         events.forEach(event => {
             const option = document.createElement('option');
             option.value = event.id;
@@ -238,9 +249,8 @@ async function loadVolunteerMatching() {
             eventSelect.appendChild(option);
         });
 
-        // Populate volunteers dropdown
         const volunteerSelect = document.getElementById('volunteerName');
-        volunteerSelect.innerHTML = ''; // Clear previous options
+        volunteerSelect.innerHTML = '';
         volunteers.forEach(volunteer => {
             const option = document.createElement('option');
             option.value = volunteer.id;
