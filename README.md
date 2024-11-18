@@ -27,8 +27,8 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ahussein0/task4test.git
-   cd task4test
+   git clone https://github.com/ahussein0/tester
+   cd tester
 
 ## Install Dependencies
 - Make sure you have Node.js and npm installed. Install the necessary packages by running:
