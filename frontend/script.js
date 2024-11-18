@@ -352,3 +352,47 @@ async function loadVolunteerHistory() {
         tableBody.innerHTML = '<tr><td colspan="3">Error loading history</td></tr>';
     }
 }
+
+// Handle Generate PDF Report
+document.getElementById('generate-pdf').addEventListener('click', () => {
+    fetch('/api/reports/generate-pdf')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to generate PDF report');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'report.pdf';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            alert(`Error: ${error.message}`);
+        });
+});
+
+// Handle Generate CSV Report
+document.getElementById('generate-csv').addEventListener('click', () => {
+    fetch('/api/reports/generate-csv')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to generate CSV report');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'report.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            alert(`Error: ${error.message}`);
+        });
+});

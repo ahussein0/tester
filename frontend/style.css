@@ -218,3 +218,23 @@ h2 {
     margin-left: 0;
   }
 }
+
+/* Reporting Section Styles */
+#reporting {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#reporting button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#reportMessage {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: green; 
+}
+

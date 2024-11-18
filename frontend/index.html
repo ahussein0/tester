@@ -213,25 +213,17 @@
 <!-- Reports Section -->
 <section id="report" class="content-section" style="display:none;">
   <h2>Generate Reports</h2>
-  <form id="reportForm">
-      <label for="reportType">Report Type:</label>
-      <select id="reportType" name="reportType" required>
-          <option value="">Select Report Type</option>
-          <option value="volunteer">Volunteer History</option>
-          <option value="event">Event Details</option>
-      </select>
-
-      <label for="reportFormat">Report Format:</label>
-      <select id="reportFormat" name="reportFormat" required>
-          <option value="">Select Format</option>
-          <option value="csv">CSV</option>
-          <option value="pdf">PDF</option>
-      </select>
-
-      <button type="submit">Generate Report</button>
-  </form>
+  
+  <p>Choose a format to download the reports:</p>
+  
+  <!-- Buttons for downloading reports -->
+  <button id="generate-pdf">Download PDF Report</button>
+  <button id="generate-csv">Download CSV Report</button>
+  
+  <!-- Message display -->
   <div id="reportMessage"></div>
 </section>
+
 
 
 </body>
