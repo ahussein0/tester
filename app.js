@@ -36,7 +36,7 @@ const eventsRoutes = require('./backend/routes/events');
 const matchingRoutes = require('./backend/routes/matching');
 const notificationsRoutes = require('./backend/routes/notifications');
 const historyRoutes = require('./backend/routes/history');
-const reportsRoutes = require('./backend/routes/reports'); // Add reports route
+
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -45,7 +45,7 @@ app.use('/api/events', eventsRoutes);
 app.use('/api/matching', matchingRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/history', historyRoutes);
-app.use('/api/reports', reportsRoutes); // Use reports route
+
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

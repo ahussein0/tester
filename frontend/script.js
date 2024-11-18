@@ -9,7 +9,6 @@ function showSection(sectionId) {
 // Initialize the app
 document.addEventListener('DOMContentLoaded', function() {
     showSection('dashboard'); // Default section
-    loadNotifications();
     loadVolunteerHistory();
     loadVolunteerMatching();
     initializeSkillsPicker();
@@ -45,63 +44,26 @@ document.querySelectorAll(".sidebar-links a").forEach((elem) => {
     });
 });
 
-// General fetch helper function with error handling
-async function fetchWithErrorHandling(url, options = {}) {
-    try {
-        const response = await fetch(url, options);
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'An error occurred');
-        }
-        return await response.json();
-    } catch (err) {
-        console.error(`Error fetching ${url}:`, err);
-        throw err;
-    }
-}
-
 // Initialize the skills picker
 function initializeSkillsPicker() {
-    const profileSkills = document.getElementById('skills');
+    const skillsDropdown = document.getElementById('skills');
     const selectedSkillsContainer = document.getElementById('selectedSkillsContainer');
     const selectedSkillsList = document.getElementById('selectedSkillsList');
 
-    function updateSelectedSkills(dropdown) {
-        selectedSkillsList.innerHTML = '';
-        
-        Array.from(dropdown.selectedOptions).forEach(option => {
-            const li = document.createElement('li');
-            li.textContent = option.value;
+    if (skillsDropdown) {
+        skillsDropdown.addEventListener('change', function() {
+            selectedSkillsList.innerHTML = ''; // Clear previous list
             
-            const removeBtn = document.createElement('span');
-            removeBtn.textContent = '✕';
-            removeBtn.style.cursor = 'pointer';
-            removeBtn.onclick = (e) => {
-                e.stopPropagation();
-                option.selected = false;
-                updateSelectedSkills(dropdown);
-            };
+            Array.from(this.selectedOptions).forEach(option => {
+                const li = document.createElement('li');
+                li.textContent = option.value;
+                selectedSkillsList.appendChild(li);
+            });
             
-            li.appendChild(removeBtn);
-            selectedSkillsList.appendChild(li);
-        });
-        
-        selectedSkillsContainer.style.display = 
-            selectedSkillsList.children.length > 0 ? 'block' : 'none';
-    }
-
-    if (profileSkills) {
-        profileSkills.addEventListener('change', function() {
-            updateSelectedSkills(this);
+            selectedSkillsContainer.style.display = 
+                selectedSkillsList.children.length > 0 ? 'block' : 'none';
         });
     }
-}
-
-
-// Helper function to retrieve selected skills
-function getSelectedSkills() {
-    const skillsDropdown = document.getElementById('skills');
-    return Array.from(skillsDropdown.selectedOptions).map(option => option.value);
 }
 
 // Handle Login
@@ -116,17 +78,22 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         submitButton.disabled = true;
         submitButton.textContent = 'Logging in...';
 
-        const data = await fetchWithErrorHandling('/api/auth/login', {
+        const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
         });
 
+        if (!response.ok) {
+            throw new Error('Login failed');
+        }
+
+        const data = await response.json();
         messageElement.innerHTML = `<p style="color: green;">Login successful!</p>`;
         localStorage.setItem('userEmail', email);
         showSection('dashboard');
     } catch (error) {
-        messageElement.innerHTML = `<p style="color: red;">${error.message || 'Login failed'}</p>`;
+        messageElement.innerHTML = `<p style="color: red;">${error.message}</p>`;
     } finally {
         submitButton.disabled = false;
         submitButton.textContent = 'Login';
@@ -146,24 +113,28 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         submitButton.disabled = true;
         submitButton.textContent = 'Registering...';
 
-        const data = await fetchWithErrorHandling('/api/auth/register', {
+        const response = await fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
         });
 
-        localStorage.setItem('userEmail', data.login.email);
+        if (!response.ok) {
+            throw new Error('Registration failed');
+        }
+
+        const data = await response.json();
+        localStorage.setItem('userEmail', email);
         messageElement.innerHTML = '<p style="color: green;">Registration successful! Logging you in...</p>';
         setTimeout(() => showSection('dashboard'), 2000);
     } catch (error) {
-        messageElement.innerHTML = `<p style="color: red;">${error.message || 'Registration failed'}</p>`;
+        messageElement.innerHTML = `<p style="color: red;">${error.message}</p>`;
     } finally {
         submitButton.disabled = false;
         submitButton.textContent = 'Register';
     }
 });
 
-// Handle Profile Form Submission
 // Handle Profile Form Submission
 document.getElementById('profileForm').addEventListener('submit', async function(event) {
     event.preventDefault();
@@ -225,7 +196,6 @@ document.getElementById('profileForm').addEventListener('submit', async function
 });
 
 // Handle Event Form Submission
-// Handle Event Form Submission
 document.getElementById('eventForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
@@ -264,41 +234,6 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
     }
 });
 
-
-// Handle Report Generation
-document.getElementById('reportForm').addEventListener('submit', async function (event) {
-    event.preventDefault();
-
-    const reportType = document.getElementById('reportType').value;
-    const reportFormat = document.getElementById('reportFormat').value;
-    const reportMessage = document.getElementById('reportMessage');
-
-    if (!reportType || !reportFormat) {
-        reportMessage.innerHTML = '<p style="color: red;">Please select a report type and format.</p>';
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/reports/${reportFormat}?type=${reportType}`);
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Error generating report.');
-        }
-
-        const blob = await response.blob();
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = `${reportType}_report.${reportFormat}`;
-        link.click();
-
-        reportMessage.innerHTML = '<p style="color: green;">Report downloaded successfully.</p>';
-    } catch (error) {
-        reportMessage.innerHTML = `<p style="color: red;">${error.message || 'Error downloading report.'}</p>`;
-    }
-});
-
-
-
 // Load Volunteer Matching
 async function loadVolunteerMatching() {
     try {
@@ -310,8 +245,8 @@ async function loadVolunteerMatching() {
         const events = await eventsResponse.json();
         const volunteers = await volunteersResponse.json();
 
-        console.log('Loaded events:', events); // Debug log
-        console.log('Loaded volunteers:', volunteers); // Debug log
+        console.log('Loaded events:', events);
+        console.log('Loaded volunteers:', volunteers);
 
         const eventSelect = document.getElementById('matchEventName');
         const volunteerSelect = document.getElementById('volunteerName');
@@ -340,7 +275,6 @@ async function loadVolunteerMatching() {
     }
 }
 
-// Add volunteer matching form handler
 // Handle Volunteer Matching Form Submission
 document.getElementById('matchingForm').addEventListener('submit', async function(event) {
     event.preventDefault();
@@ -372,7 +306,7 @@ document.getElementById('matchingForm').addEventListener('submit', async functio
         document.getElementById('matchMessage').innerHTML = 
             `<p style="color: green;">Successfully matched volunteer to event!</p>`;
             
-        // Optionally refresh the matching data
+        // Reload matching data
         loadVolunteerMatching();
     } catch (error) {
         console.error('Error:', error);
@@ -381,40 +315,40 @@ document.getElementById('matchingForm').addEventListener('submit', async functio
     }
 });
 
-// Load Notifications
-async function loadNotifications() {
-    try {
-        const notifications = await fetchWithErrorHandling('/api/notifications', {
-            headers: { 'user-id': localStorage.getItem('userEmail') },
-        });
-
-        const container = document.getElementById('notificationMessage');
-        container.innerHTML = notifications.length
-            ? notifications.map(n => `<p>${n.message}</p>`).join('')
-            : '<p>No notifications available.</p>';
-    } catch (error) {
-        console.error('Error loading notifications:', error);
-    }
-}
-
 // Load Volunteer History
 async function loadVolunteerHistory() {
     try {
-        const history = await fetchWithErrorHandling('/api/history', {
-            headers: { 'user-id': localStorage.getItem('userEmail') },
+        const userEmail = localStorage.getItem('userEmail');
+        if (!userEmail) return;
+
+        const response = await fetch('/api/history', {
+            headers: {
+                'user-id': userEmail
+            }
         });
 
+        if (!response.ok) {
+            throw new Error('Failed to fetch history');
+        }
+
+        const history = await response.json();
         const tableBody = document.getElementById('historyTable').querySelector('tbody');
-        tableBody.innerHTML = history.length
-            ? history.map(h => `
-                <tr>
-                    <td>${h.eventName}</td>
-                    <td>${h.eventDate}</td>
-                    <td>${h.status}</td>
-                </tr>
-            `).join('')
-            : '<tr><td colspan="3">No history found.</td></tr>';
+
+        if (history.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="3">No history found.</td></tr>';
+            return;
+        }
+
+        tableBody.innerHTML = history.map(h => `
+            <tr>
+                <td>${h.eventName}</td>
+                <td>${new Date(h.eventDate).toLocaleDateString()}</td>
+                <td>${h.status}</td>
+            </tr>
+        `).join('');
     } catch (error) {
         console.error('Error loading volunteer history:', error);
+        const tableBody = document.getElementById('historyTable').querySelector('tbody');
+        tableBody.innerHTML = '<tr><td colspan="3">Error loading history</td></tr>';
     }
 }
