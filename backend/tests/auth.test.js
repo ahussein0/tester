@@ -20,7 +20,9 @@ describe('Auth Routes', () => {
             .send({ email: 'test@example.com', password: 'password123' });
 
         expect(response.status).toBe(201);
-        expect(response.body.message).toBe('Registration successful');
+        expect(response.body).toHaveProperty('message', 'Registration successful');
+        expect(response.body).toHaveProperty('user');
+        expect(response.body.user).toHaveProperty('email', 'test@example.com');
     });
 
     test('POST /api/auth/register - Duplicate Email', async () => {
@@ -33,7 +35,26 @@ describe('Auth Routes', () => {
             .send({ email: 'test@example.com', password: 'password123' });
 
         expect(response.status).toBe(400);
-        expect(response.body.message).toBe('User already exists');
+        expect(response.body).toHaveProperty('message', 'User already exists');
+        expect(response.body).not.toHaveProperty('user');
+    });
+
+    test('POST /api/auth/register - Missing Password', async () => {
+        const response = await request(server)
+            .post('/api/auth/register')
+            .send({ email: 'missingpassword@example.com' });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('message', 'Password is required');
+    });
+
+    test('POST /api/auth/register - Invalid Email Format', async () => {
+        const response = await request(server)
+            .post('/api/auth/register')
+            .send({ email: 'invalidemail', password: 'password123' });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('message', 'Invalid email format');
     });
 
     test('POST /api/auth/login - Successful Login', async () => {
@@ -46,7 +67,9 @@ describe('Auth Routes', () => {
             .send({ email: 'testlogin@example.com', password: 'password123' });
 
         expect(response.status).toBe(200);
-        expect(response.body.message).toBe('Login successful');
+        expect(response.body).toHaveProperty('message', 'Login successful');
+        expect(response.body).toHaveProperty('token');
+        expect(typeof response.body.token).toBe('string');
     });
 
     test('POST /api/auth/login - Invalid Login', async () => {
@@ -55,6 +78,16 @@ describe('Auth Routes', () => {
             .send({ email: 'invalid@example.com', password: 'wrongpassword' });
 
         expect(response.status).toBe(400);
-        expect(response.body.message).toBe('Invalid email or password');
+        expect(response.body).toHaveProperty('message', 'Invalid email or password');
+        expect(response.body).not.toHaveProperty('token');
+    });
+
+    test('POST /api/auth/login - Missing Fields', async () => {
+        const response = await request(server)
+            .post('/api/auth/login')
+            .send({ email: 'missingfields@example.com' });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('message', 'Email and password are required');
     });
 });
