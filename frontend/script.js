@@ -264,7 +264,41 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
     }
 });
 
-// Updated Load Volunteer Matching function
+
+// Handle Report Generation
+document.getElementById('reportForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const reportType = document.getElementById('reportType').value;
+    const reportFormat = document.getElementById('reportFormat').value;
+    const reportMessage = document.getElementById('reportMessage');
+
+    if (!reportType || !reportFormat) {
+        reportMessage.innerHTML = '<p style="color: red;">Please select a report type and format.</p>';
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/reports/${reportFormat}?type=${reportType}`);
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Error generating report.');
+        }
+
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `${reportType}_report.${reportFormat}`;
+        link.click();
+
+        reportMessage.innerHTML = '<p style="color: green;">Report downloaded successfully.</p>';
+    } catch (error) {
+        reportMessage.innerHTML = `<p style="color: red;">${error.message || 'Error downloading report.'}</p>`;
+    }
+});
+
+
+
 // Load Volunteer Matching
 async function loadVolunteerMatching() {
     try {

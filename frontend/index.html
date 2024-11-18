@@ -34,6 +34,7 @@
       <li><a href="#" class="tooltip" data-section="match">Volunteer Matching</a></li>
       <li><a href="#" class="tooltip" data-section="history">Volunteer History</a></li>
       <li><a href="#" class="tooltip" data-section="notifications">Notifications</a></li>
+      <li><a href="#" class="tooltip" data-section="report">Reports</a></li>
     </ul>
   </div>
 </nav>
@@ -208,6 +209,30 @@
     <div id="notificationMessage"></div>
   </section>
 </main>
+
+<!-- Reports Section -->
+<section id="report" class="content-section" style="display:none;">
+  <h2>Generate Reports</h2>
+  <form id="reportForm">
+      <label for="reportType">Report Type:</label>
+      <select id="reportType" name="reportType" required>
+          <option value="">Select Report Type</option>
+          <option value="volunteer">Volunteer History</option>
+          <option value="event">Event Details</option>
+      </select>
+
+      <label for="reportFormat">Report Format:</label>
+      <select id="reportFormat" name="reportFormat" required>
+          <option value="">Select Format</option>
+          <option value="csv">CSV</option>
+          <option value="pdf">PDF</option>
+      </select>
+
+      <button type="submit">Generate Report</button>
+  </form>
+  <div id="reportMessage"></div>
+</section>
+
 
 </body>
 </html>
