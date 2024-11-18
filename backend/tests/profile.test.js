@@ -21,7 +21,8 @@ describe('Profile Routes', () => {
             .send(profileData);
 
         expect(response.status).toBe(200);
-        expect(response.body.message).toBe('Profile updated successfully');
+        expect(response.body.message).toBe('Profile updated successfully.');
+
     });
 
     test('POST /api/profile - Missing Required Fields', async () => {
@@ -31,6 +32,7 @@ describe('Profile Routes', () => {
             .send({ fullName: 'Incomplete Data' });
 
         expect(response.status).toBe(400);
-        expect(response.body.message).toBe('All required fields must be filled');
+        expect(response.body.message).toBe('All required fields must be provided');
+
     });
 });

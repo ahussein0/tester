@@ -97,6 +97,7 @@ function initializeSkillsPicker() {
     }
 }
 
+
 // Helper function to retrieve selected skills
 function getSelectedSkills() {
     const skillsDropdown = document.getElementById('skills');
@@ -163,9 +164,12 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
 });
 
 // Handle Profile Form Submission
+// Handle Profile Form Submission
 document.getElementById('profileForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
+    const userEmail = localStorage.getItem('userEmail');
+    
     const formData = {
         fullName: document.getElementById('fullName').value,
         address1: document.getElementById('address1').value,
@@ -173,29 +177,54 @@ document.getElementById('profileForm').addEventListener('submit', async function
         city: document.getElementById('city').value,
         state: document.getElementById('state').value,
         zipCode: document.getElementById('zipCode').value,
-        skills: getSelectedSkills(),
-        preferences: document.getElementById('preferences').value,
-        availability: $('#availability').val().split(', '),
+        skills: Array.from(document.getElementById('skills').selectedOptions).map(option => option.value),
+        preferences: document.getElementById('preferences').value || '',
+        availability: $('#availability').val() ? $('#availability').val().split(', ') : []
     };
 
     try {
-        const data = await fetchWithErrorHandling('/api/profile', {
+        // Update profile
+        const profileResponse = await fetch('/api/profile', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'user-id': localStorage.getItem('userEmail'),
+                'user-id': userEmail,
             },
             body: JSON.stringify(formData),
         });
 
+        if (!profileResponse.ok) {
+            throw new Error('Failed to update profile');
+        }
+
+        // Register as volunteer
+        const volunteerResponse = await fetch('/api/matching/register-volunteer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                fullName: formData.fullName,
+                email: userEmail,
+                skills: formData.skills
+            }),
+        });
+
+        if (!volunteerResponse.ok) {
+            throw new Error('Failed to register as volunteer');
+        }
+
         document.getElementById('profileMessage').innerHTML = 
-            `<p style="color: green;">${data.message || 'Profile updated successfully!'}</p>`;
+            `<p style="color: green;">Profile updated successfully!</p>`;
+            
+        // Reload matching data
+        loadVolunteerMatching();
     } catch (error) {
+        console.error('Error:', error);
         document.getElementById('profileMessage').innerHTML = 
-            `<p style="color: red;">${error.message || 'Failed to update profile.'}</p>`;
+            `<p style="color: red;">${error.message}</p>`;
     }
 });
 
+// Handle Event Form Submission
 // Handle Event Form Submission
 document.getElementById('eventForm').addEventListener('submit', async function(event) {
     event.preventDefault();
@@ -207,60 +236,116 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
         requiredSkills: Array.from(document.getElementById('eventSkills').selectedOptions).map(option => option.value),
         urgency: document.getElementById('urgency').value,
         eventDate: document.getElementById('eventDate').value,
+        createdBy: localStorage.getItem('userEmail')
     };
 
-    if (!formData.requiredSkills || formData.requiredSkills.length === 0) {
-        alert('Please select at least one required skill.');
-        return;
-    }
-
     try {
-        const response = await fetch('/api/events', {
+        // Create event
+        const response = await fetch('/api/matching/events', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
         });
 
-        const data = await response.json();
         if (!response.ok) {
-            throw new Error(data.message || 'Failed to create event.');
+            throw new Error('Failed to create event');
         }
 
+        const data = await response.json();
+        
         alert('Event created successfully!');
         document.getElementById('eventForm').reset();
+        
+        // Reload matching data
+        loadVolunteerMatching();
     } catch (error) {
         console.error('Error creating event:', error);
         alert(error.message);
     }
 });
 
+// Updated Load Volunteer Matching function
 // Load Volunteer Matching
 async function loadVolunteerMatching() {
     try {
-        const events = await fetchWithErrorHandling('/api/matching/events');
-        const volunteers = await fetchWithErrorHandling('/api/matching/volunteers');
+        const [eventsResponse, volunteersResponse] = await Promise.all([
+            fetch('/api/matching/events'),
+            fetch('/api/matching/volunteers')
+        ]);
+
+        const events = await eventsResponse.json();
+        const volunteers = await volunteersResponse.json();
+
+        console.log('Loaded events:', events); // Debug log
+        console.log('Loaded volunteers:', volunteers); // Debug log
 
         const eventSelect = document.getElementById('matchEventName');
-        eventSelect.innerHTML = '';
+        const volunteerSelect = document.getElementById('volunteerName');
+
+        // Clear existing options
+        eventSelect.innerHTML = '<option value="">Select Event</option>';
+        volunteerSelect.innerHTML = '<option value="">Select Volunteer</option>';
+
+        // Populate events dropdown
         events.forEach(event => {
             const option = document.createElement('option');
             option.value = event.id;
-            option.textContent = `${event.eventName} (${event.eventDate})`;
+            option.textContent = `${event.eventName} (${new Date(event.eventDate).toLocaleDateString()})`;
             eventSelect.appendChild(option);
         });
 
-        const volunteerSelect = document.getElementById('volunteerName');
-        volunteerSelect.innerHTML = '';
+        // Populate volunteers dropdown
         volunteers.forEach(volunteer => {
             const option = document.createElement('option');
             option.value = volunteer.id;
-            option.textContent = volunteer.name;
+            option.textContent = `${volunteer.name}`;
             volunteerSelect.appendChild(option);
         });
     } catch (error) {
         console.error('Error loading volunteer matching data:', error);
     }
 }
+
+// Add volunteer matching form handler
+// Handle Volunteer Matching Form Submission
+document.getElementById('matchingForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const formData = {
+        volunteerId: document.getElementById('volunteerName').value,
+        eventId: document.getElementById('matchEventName').value
+    };
+
+    if (!formData.volunteerId || !formData.eventId) {
+        alert('Please select both a volunteer and an event');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/matching/match', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create match');
+        }
+
+        const data = await response.json();
+        document.getElementById('matchMessage').innerHTML = 
+            `<p style="color: green;">Successfully matched volunteer to event!</p>`;
+            
+        // Optionally refresh the matching data
+        loadVolunteerMatching();
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('matchMessage').innerHTML = 
+            `<p style="color: red;">${error.message || 'Failed to create match.'}</p>`;
+    }
+});
 
 // Load Notifications
 async function loadNotifications() {

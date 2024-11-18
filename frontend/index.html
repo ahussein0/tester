@@ -168,16 +168,24 @@
   <section id="match" class="content-section" style="display:none;">
     <h2>Volunteer Matching</h2>
     <form id="matchingForm">
-      <label for="volunteerName">Volunteer Name:</label>
-      <input type="text" id="volunteerName" name="volunteerName" required>
+        <div class="form-group">
+            <label for="volunteerName">Select Volunteer:</label>
+            <select id="volunteerName" name="volunteerName" required>
+                <option value="">Select Volunteer</option>
+            </select>
+        </div>
 
-      <label for="eventName">Event Name:</label>
-      <select id="matchEventName" name="eventName" required></select>
+        <div class="form-group">
+            <label for="matchEventName">Select Event:</label>
+            <select id="matchEventName" name="eventName" required>
+                <option value="">Select Event</option>
+            </select>
+        </div>
 
-      <button type="submit">Match Volunteer</button>
+        <button type="submit">Match Volunteer</button>
     </form>
     <div id="matchMessage"></div>
-  </section>
+</section>
 
   <!-- Volunteer History Section -->
   <section id="history" class="content-section" style="display:none;">

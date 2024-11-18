@@ -5,6 +5,9 @@ require('dotenv').config(); // Load environment variables
 
 const app = express();
 
+app.locals.volunteers = [];
+app.locals.profiles = {};  
+
 // Middleware
 app.use(bodyParser.json());
 
@@ -26,7 +29,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/frontend/index.html');
 });
 
-// API Routes
+// Import routes - only import the routes we actually have
 const authRoutes = require('./backend/routes/auth');
 const profileRoutes = require('./backend/routes/profile');
 const eventsRoutes = require('./backend/routes/events');
@@ -34,6 +37,7 @@ const matchingRoutes = require('./backend/routes/matching');
 const notificationsRoutes = require('./backend/routes/notifications');
 const historyRoutes = require('./backend/routes/history');
 
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/events', eventsRoutes);
@@ -53,4 +57,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-module.exports = app; // Export app for testing purposes
+module.exports = app;
