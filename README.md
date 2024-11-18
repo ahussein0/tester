@@ -43,5 +43,5 @@ This will install all dependencies listed in package.json, including:
 
 ## Launching the server locally
 - To launch the server locally, open the terminal in your project directory and run:
-``` node server.js ```
+``` npm start ```
 - This will start the server, and it will be accessible at http://localhost:3001
