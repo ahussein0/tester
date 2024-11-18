@@ -217,20 +217,4 @@ h2 {
   #content {
     margin-left: 0;
   }
-<<<<<<< HEAD
 }
-=======
-}
-
-/* Report section */
-#report {
-  display: block;
-  margin-top: 20px;
-}
-
-#reportForm label, #reportForm select {
-  display: block;
-  margin-bottom: 10px;
-}
-
->>>>>>> parent of 1a9966e (revert)
