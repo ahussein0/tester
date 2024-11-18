@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { validateEmail, validatePassword } = require('../utils/validations');
-
-let users = []; // Hard-coded user data
+const UserCredentials = require('../models/UserCredentials'); // Changed from User to UserCredentials
 
 // Registration
 router.post('/register', async (req, res) => {
@@ -17,40 +16,28 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ message: 'Password must be at least 6 characters' });
         }
 
-        // Check if the user already exists
-        const existingUser = users.find(user => user.email === email);
+        // Check if user exists
+        const existingUser = await UserCredentials.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Register the user
-        const newUser = { 
-            email, 
-            password, 
-            profileCompleted: false,
-            dateCreated: new Date()
-        };
-        users.push(newUser);
-
-        // Instead of using fetch, we'll just store initial profile data in memory
-        if (req.app.locals.profiles === undefined) {
-            req.app.locals.profiles = {};
-        }
-
-        // Create initial profile
-        req.app.locals.profiles[email] = {
+        // Create new user
+        const user = new UserCredentials({
             email,
-            dateCreated: new Date(),
+            password, // In a real application, you should hash the password
             profileCompleted: false
-        };
+        });
+
+        await user.save();
 
         // Automatically log in the user after registration
         res.status(201).json({
             message: 'Registration successful',
             login: {
                 message: 'Login successful',
-                email: newUser.email,
-                profileCompleted: newUser.profileCompleted,
+                email: user.email,
+                profileCompleted: user.profileCompleted,
             },
         });
     } catch (error) {
@@ -60,16 +47,24 @@ router.post('/register', async (req, res) => {
 });
 
 // Login
-router.post('/login', (req, res) => {
-    const { email, password } = req.body;
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
 
-    // Check user credentials
-    const user = users.find(user => user.email === email && user.password === password);
-    if (!user) {
-        return res.status(400).json({ message: 'Invalid email or password' });
+        // Check user credentials
+        const user = await UserCredentials.findOne({ email, password }); // In real app, compare hashed passwords
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid email or password' });
+        }
+
+        res.json({ 
+            message: 'Login successful',
+            profileCompleted: user.profileCompleted 
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Error during login' });
     }
-
-    res.json({ message: 'Login successful', profileCompleted: user.profileCompleted });
 });
 
 module.exports = router;

@@ -1,10 +1,30 @@
+// backend/models/VolunteerHistory.js
+
 const mongoose = require('mongoose');
 
 const volunteerHistorySchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'UserCredentials', required: true },
-    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'EventDetails', required: true },
-    participationStatus: { type: String, enum: ['completed', 'pending', 'cancelled'], required: true },
-    feedback: { type: String }
+    userId: {
+        type: String,
+        required: true,
+        ref: 'UserCredentials'
+    },
+    eventName: {
+        type: String,
+        required: true
+    },
+    eventDate: {
+        type: Date,
+        required: true
+    },
+    status: {
+        type: String,
+        required: true,
+        enum: ['MATCHED', 'COMPLETED', 'CANCELLED']
+    },
+    dateCreated: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 module.exports = mongoose.model('VolunteerHistory', volunteerHistorySchema);

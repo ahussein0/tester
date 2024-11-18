@@ -1,10 +1,12 @@
+// backend/routes/profile.js
 const express = require('express');
 const router = express.Router();
-
-let profiles = {}; // In-memory storage for profiles
+const UserProfile = require('../models/UserProfile');
+const UserCredentials = require('../models/UserCredentials');
+const Volunteer = require('../models/Volunteer');
 
 // Update Profile
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const userEmail = req.headers['user-id'];
         
@@ -24,14 +26,9 @@ router.post('/', (req, res) => {
             availability 
         } = req.body;
 
-        // Validate required fields
-        if (!fullName || !address1 || !city || !state || !zipCode || !skills || !availability) {
-            return res.status(400).json({ message: 'All required fields must be provided.' });
-        }
-
         // Create or update profile
-        const profile = {
-            id: userEmail,
+        const profileData = {
+            email: userEmail,
             fullName,
             address1,
             address2,
@@ -40,42 +37,43 @@ router.post('/', (req, res) => {
             zipCode,
             skills,
             preferences,
-            availability,
-            dateCreated: profiles[userEmail]?.dateCreated || new Date(),
-            lastUpdated: new Date(),
-            status: 'ACTIVE'
+            availability
         };
 
-        // Save profile
-        profiles[userEmail] = profile;
+        // Update or create user profile
+        const profile = await UserProfile.findOneAndUpdate(
+            { email: userEmail },
+            profileData,
+            { new: true, upsert: true, runValidators: true }
+        );
 
-        // Since we're running on the same server, we don't need to make an HTTP request
-        // Instead, we can just save the volunteer information directly
-        if (req.app.locals.volunteers === undefined) {
-            req.app.locals.volunteers = [];
-        }
-
-        // Add or update volunteer record
-        const volunteerIndex = req.app.locals.volunteers.findIndex(v => v.email === userEmail);
+        // Update volunteer record
         const volunteerData = {
-            id: userEmail,
             name: fullName,
             email: userEmail,
-            skills: skills
+            skills,
+            availability
         };
 
-        if (volunteerIndex === -1) {
-            req.app.locals.volunteers.push(volunteerData);
-        } else {
-            req.app.locals.volunteers[volunteerIndex] = volunteerData;
-        }
+        await Volunteer.findOneAndUpdate(
+            { email: userEmail },
+            volunteerData,
+            { new: true, upsert: true, runValidators: true }
+        );
+
+        // Update user's profileCompleted status
+        await UserCredentials.findOneAndUpdate(
+            { email: userEmail },
+            { profileCompleted: true }
+        );
 
         res.json({ 
-            message: 'Profile updated successfully.',
+            message: 'Profile updated successfully',
             profile 
         });
+
     } catch (error) {
-        console.error('Error in profile update:', error);
+        console.error('Profile update error:', error);
         res.status(500).json({ 
             message: 'Error updating profile', 
             error: error.message 
@@ -84,7 +82,7 @@ router.post('/', (req, res) => {
 });
 
 // Get Profile
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const userEmail = req.headers['user-id'];
         
@@ -92,7 +90,7 @@ router.get('/', (req, res) => {
             return res.status(400).json({ message: 'User ID is required' });
         }
 
-        const profile = profiles[userEmail] || null;
+        const profile = await UserProfile.findOne({ email: userEmail });
         
         if (!profile) {
             return res.status(404).json({ message: 'Profile not found' });
@@ -100,6 +98,7 @@ router.get('/', (req, res) => {
 
         res.json(profile);
     } catch (error) {
+        console.error('Profile fetch error:', error);
         res.status(500).json({ 
             message: 'Error fetching profile', 
             error: error.message 
