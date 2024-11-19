@@ -1,4 +1,4 @@
-// Function to show different sections
+// Function showing different sections
 function showSection(sectionId) {
     const sections = document.querySelectorAll('.content-section');
     sections.forEach(section => {
@@ -8,7 +8,7 @@ function showSection(sectionId) {
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', function() {
-    showSection('dashboard'); // Default section
+    showSection('dashboard'); // default section
     loadVolunteerHistory();
     loadVolunteerMatching();
     initializeSkillsPicker();
@@ -35,7 +35,7 @@ $(function() {
     });
 });
 
-// Sidebar navigation logic
+// Sidebar nav logic
 document.querySelectorAll(".sidebar-links a").forEach((elem) => {
     elem.addEventListener("click", function(event) {
         event.preventDefault();
@@ -66,7 +66,7 @@ function initializeSkillsPicker() {
     }
 }
 
-// Handle Login
+// Handle login
 document.getElementById('loginForm').addEventListener('submit', async function(event) {
     event.preventDefault();
     const email = document.getElementById('email').value;
@@ -135,7 +135,6 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     }
 });
 
-// Handle Profile Form Submission
 // Handle Profile Form Submission
 document.getElementById('profileForm').addEventListener('submit', async function(event) {
     event.preventDefault();
@@ -210,7 +209,6 @@ document.getElementById('profileForm').addEventListener('submit', async function
 });
 
 // Handle Event Form Submission
-// Handle Event Form Submission
 document.getElementById('eventForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
@@ -256,7 +254,6 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
 });
 
 // Load Volunteer Matching
-// Load Volunteer Matching
 async function loadVolunteerMatching() {
     try {
         // Add loading indicators
@@ -301,8 +298,6 @@ async function loadVolunteerMatching() {
     }
 }
 
-// Handle Volunteer Matching Form Submission
-// Handle Volunteer Matching Form Submission
 // Handle Volunteer Matching Form Submission
 document.getElementById('matchingForm').addEventListener('submit', async function(event) {
     event.preventDefault();
